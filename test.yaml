@@ -1,0 +1,5 @@
+tools:
+  - name: "Data Catalog"
+    type: data
+  - name: "Greenplum"
+    type: data_warehouse
