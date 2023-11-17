@@ -96,7 +96,7 @@ tools:
     description: "Spark Dev Env"
     body=: "Spark is an open-source unified analytics engine for large-scale data processing, including an interface for programming clusters with data parallelism and fault tolerance."
   - name: "kubefate"
-    title: "Distributed ML"
+    title: "Federated ML"
     category: "clusters"
     image: "./static/images/kubefate.png"
     connector: "http://jupyter-jupyterhub.tanzudatatap.com"
