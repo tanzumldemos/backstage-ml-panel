@@ -94,7 +94,7 @@ tools:
     connector: "http://jupyter-jupyterhub.tanzudatatap.com"
     console: "http://kubeflow-pipelines.tanzudatatap.com/#/pipelines"
     description: "Spark Dev Env"
-    body=: "Spark is an open-source unified analytics engine for large-scale data processing, including an interface for programming clusters with data parallelism and fault tolerance."
+    body: "Spark is an open-source unified analytics engine for large-scale data processing, including an interface for programming clusters with data parallelism and fault tolerance."
   - name: "kubefate"
     title: "Federated ML"
     category: "clusters"
