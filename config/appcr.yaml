@@ -1,0 +1,28 @@
+#apiVersion: secretgen.carvel.dev/v1alpha1
+#kind: SecretExport
+#metadata:
+#  name: greenplum-training-secret
+#  namespace: argo
+#spec:
+#  toNamespaces:
+#    - "default"
+#---
+#apiVersion: secretgen.carvel.dev/v1alpha1
+#kind: SecretImport
+#metadata:
+#  name: greenplum-training-secret
+#  namespace: default
+#spec:
+#  fromNamespace: argo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: greenplum-training-service
+  labels:
+    backstage-dashboard-name: greenplum-training-service
+    backstage-dashboard-category: greenplum
+    backstage-dashboard-type: console
+spec:
+  type: ExternalName
+  externalName: ec2-44-201-91-88.compute-1.amazonaws.com:28080

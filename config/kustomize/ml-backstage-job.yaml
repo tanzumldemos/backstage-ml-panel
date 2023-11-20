@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ml-backstage-job
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: load-params
+              image: golang
+              volumeMounts:
+                - name: ml-backstage-configmap-volume
+                  mountPath: /tmp
+              command: [ "sh", "-c", "chmod +x /tmp/task.sh; cat /tmp/properties.yaml" ]
+          restartPolicy: Never
+          volumes:
+            - name: ml-backstage-configmap-volume
+              configMap:
+                name: ml-backstage-configmap

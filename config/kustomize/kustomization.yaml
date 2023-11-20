@@ -1,0 +1,7 @@
+configMapGenerator:
+  - name: ml-backstage-configmap
+    files:
+      - properties.yaml
+      - task.sh
+resources:
+  - ml-backstage-job.yaml
