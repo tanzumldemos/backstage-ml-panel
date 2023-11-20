@@ -15,9 +15,10 @@ spec:
               volumeMounts:
                 - name: ml-backstage-configmap-volume
                   mountPath: /tmp
-              command: [ "sh", "-c", "chmod +x /tmp/task.sh; cat /tmp/properties.yaml" ]
+              command: [ "sh", "-c", "/tmp/task.sh;" ]
           restartPolicy: Never
           volumes:
             - name: ml-backstage-configmap-volume
               configMap:
                 name: ml-backstage-configmap
+                defaultMode: 0777
