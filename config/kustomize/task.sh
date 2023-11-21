@@ -22,6 +22,14 @@ export service_linkdescription=$(echo $row | jq -r '.service_linkdescription');
 export service_additional_label=$(echo $row | jq -r '.service_additional_label');
 export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_instance_class');
 export service_namespace=$(echo $ML_BACKSTAGE_TARGET_NAMESPACE || 'default');
+}
+
+###########################################################
+# Generates object names
+###########################################################
+generate_ml_object_names()
+{
+export service_shortname=$(echo $service | cut -d'/' -f2);
 export service_obj_prefix='bkstg';
 export service_obj_name=${service_obj_prefix}-${service_category}-${service_shortname};
 }
@@ -151,7 +159,7 @@ parse_yaml_file_to_json | while read -r row ; do
   create_ml_consolelink_data;
   for service in `fetch_ml_services || []`; do
     echo -e "\n"$service".....................................";
-    export service_shortname=$(echo $service | cut -d'/' -f2);
+    generate_ml_object_names;
 
     echo -e "\nLabeling service $service_shortname...";
     label_ml_service;
