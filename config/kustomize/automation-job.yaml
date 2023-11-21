@@ -15,7 +15,7 @@ spec:
               image: $(image_repo)
               env:
                 - name: ML_BACKSTAGE_TARGET_NAMESPACE
-                  value: default
+                  value: $(backstage_namespace)
               volumeMounts:
                 - name: ml-backstage-configmap-volume
                   mountPath: /usr/src/app

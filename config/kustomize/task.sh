@@ -21,7 +21,9 @@ export service_linkname=$(echo $row | jq -r '.service_linkname');
 export service_linkdescription=$(echo $row | jq -r '.service_linkdescription');
 export service_additional_label=$(echo $row | jq -r '.service_additional_label');
 export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_instance_class');
-export service_namespace=$(echo $ML_BACKSTAGE_TARGET_NAMESPACE || 'default')
+export service_namespace=$(echo $ML_BACKSTAGE_TARGET_NAMESPACE || 'default');
+export service_obj_prefix='bkstg';
+export service_obj_name=${service_obj_prefix}-${service_category}-${service_shortname};
 }
 
 ###########################################################
@@ -71,7 +73,7 @@ cat <<EOF | kubectl apply -n $service_namespace -f -
 apiVersion: services.apps.tanzu.vmware.com/v1alpha1
 kind: ClusterInstanceClass
 metadata:
-  name: ${service_category}-${service_shortname}
+  name: ${service_obj_name}
   namespace: ${service_namespace}
 spec:
   description:
@@ -92,10 +94,11 @@ fi
 create_ml_classclaim()
 {
 # Creating
-tanzu service class-claim create ${service_category}-${service_shortname} --class ${service_cluster_instance_class:-${service_category}-${service_shortname}};
+tanzu service class-claim create ${service_obj_name} --class ${service_cluster_instance_class:-${service_obj_name}} \
+--namespace $service_namespace;
 
 # Labeling
-kubectl label classclaim ${service_category}-${service_shortname} backstage-dashboard-name=${service_shortname} \
+kubectl label classclaim ${service_obj_name} backstage-dashboard-name=${service_shortname} \
 backstage-dashboard-category=${service_category} \
 backstage-dashboard-type=binding --overwrite -n $service_namespace;
 }
@@ -108,13 +111,35 @@ create_ml_consolelink_data()
 {
 if [ ! -z ${service_link} ]
 then
-kubectl delete configmap ${service_category}-${service_linkname} -n $service_namespace || true;
-kubectl create configmap ${service_category}-${service_linkname} -n $service_namespace \
+kubectl delete configmap ${service_obj_prefix}-${service_category}-${service_linkname} -n $service_namespace || true;
+kubectl create configmap ${service_obj_prefix}-${service_category}-${service_linkname} -n $service_namespace \
 --from-literal=link=${service_link} --from-literal=link_description="${service_linkdescription}";
-kubectl label configmap ${service_category}-${service_linkname} backstage-dashboard-name=${service_linkname} \
+kubectl label configmap ${service_obj_prefix}-${service_category}-${service_linkname} backstage-dashboard-name=${service_linkname} \
 backstage-dashboard-category=${service_category} \
 backstage-dashboard-type=console --overwrite -n $service_namespace;
 fi
+}
+
+add_servicebinding_to_jupyterhub()
+{
+for jupyter in `kubectl get deployment -l backstage-dashboard-category=servicebinding -o name -n $service_namespace`; do
+export jupyter_shortname=$(echo $jupyter | cut -d'/' -f2);
+cat <<EOF | kubectl apply -n $service_namespace -f -
+apiVersion: servicebinding.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: ${service_obj_name}-jupyter-binding
+spec:
+  service:
+    apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+    kind: ClassClaim
+    name: ${service_obj_name}
+  workload:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: $jupyter_shortname
+EOF
+done;
 }
 
 ###########################################################
@@ -122,7 +147,7 @@ fi
 ###########################################################
 parse_yaml_file_to_json | while read -r row ; do
   initialize_ml_category_properties;
-  echo -e "\n\n\nCreating and labeling ConfigMap for ${service_category}-${service_linkname} console link (if it exists)...";
+  echo -e "\n\n\nCreating and labeling ConfigMap for ${service_obj_prefix}-${service_category}-${service_linkname} console link (if it exists)...";
   create_ml_consolelink_data;
   for service in `fetch_ml_services || []`; do
     echo -e "\n"$service".....................................";
@@ -131,10 +156,13 @@ parse_yaml_file_to_json | while read -r row ; do
     echo -e "\nLabeling service $service_shortname...";
     label_ml_service;
 
-    echo -e "\nCreating ${service_category}-${service_shortname} ClusterInstanceClass (if applicable)...";
+    echo -e "\nCreating ${service_obj_name} ClusterInstanceClass (if applicable)...";
     create_ml_clusterinstanceclass;
 
-    echo -e "\nCreating and labeling ${service_category}-${service_shortname} ClassClaim...";
+    echo -e "\nCreating and labeling ${service_obj_name} ClassClaim...";
     create_ml_classclaim;
+
+    echo -e "\nAdding ClassClaim ${service_obj_name} to Jupyter server's service bindings ...";
+    add_servicebinding_to_jupyterhub;
   done;
 done;
