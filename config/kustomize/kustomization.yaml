@@ -1,7 +1,21 @@
 configMapGenerator:
   - name: ml-backstage-configmap
     files:
-      - properties.yaml
+      - automation-fields.yaml
       - task.sh
+  - name: env-configmap
+    files:
+      - image_repo
 resources:
-  - ml-backstage-job.yaml
+  - automation-job.yaml
+replacements:
+  - source:
+      kind: ConfigMap
+      name: env-configmap
+      fieldPath: data.image_repo
+    targets:
+      - select:
+          kind: CronJob
+          name: ml-backstage-job
+        fieldPaths:
+          - spec.jobTemplate.spec.template.spec.containers.[name=load-params].image

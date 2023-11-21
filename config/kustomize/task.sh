@@ -1,35 +1,27 @@
+#! /bin/bash
+###########################################################
+# Generates JSON output from YAML file
+###########################################################
+parse_yaml_file_to_json()
+{
+yq -p yaml -o json "${ML_PROPERTIES_FILE}" | jq -c '.properties | .[]'
+}
 
 ###########################################################
 # Sets properties for each ML category
 ###########################################################
-fetch_ml_category_properties()
+initialize_ml_category_properties()
 {
-#  export service_group=sql.tanzu.vmware.com;
-#  export service_apigroup=postgres.sql.tanzu.vmware.com;
-#  export service_kind=Postgres;
-#  export service_category=postgres;
-#  export service_link="";
-#  export service_linkname=""
-#  export service_additional_label=""
-#  export service_cluster_instance_class=""
-
-#  export service_group="";
-#  export service_apigroup="secret";
-#  export service_kind=Secret;
-#  export service_category=greenplum;
-#  export service_link="ec2-44-201-91-88.compute-1.amazonaws.com:28080";
-#  export service_linkname="greenplum-training"
-#  export service_additional_label=""
-#  export service_cluster_instance_class=""
-
-  export service_group=""
-  export service_apigroup="statefulset"
-  export service_kind="StatefulSet"
-  export service_category="postgres"
-  export service_link=""
-  export service_linkname=""
-  export service_additional_label="app.kubernetes.io/name=postgresql,app.kubernetes.io/managed-by=Helm"
-  export service_cluster_instance_class="postgresql-unmanaged"
+export service_group=$(echo $row | jq -r '.service_group');
+export service_apigroup=$(echo $row | jq -r '.service_apigroup');
+export service_kind=$(echo $row | jq -r '.service_kind');
+export service_category=$(echo $row | jq -r '.service_category');
+export service_link=$(echo $row | jq -r '.service_link');
+export service_linkname=$(echo $row | jq -r '.service_linkname');
+export service_linkdescription=$(echo $row | jq -r '.service_linkdescription');
+export service_additional_label=$(echo $row | jq -r '.service_additional_label');
+export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_instance_class');
+export service_namespace=$(echo $ML_BACKSTAGE_TARGET_NAMESPACE || 'default')
 }
 
 ###########################################################
@@ -38,8 +30,9 @@ fetch_ml_category_properties()
 ###########################################################
 fetch_ml_services()
 {
-  fetch_labels="";
-  separator="";
+fetch_labels="";
+separator="";
+if [ ! -z $service_apigroup ]; then
   if [ $service_apigroup == "secret" ] || [ ! -z $service_additional_label ]; then
     fetch_label="-l "
   fi
@@ -50,7 +43,8 @@ fetch_ml_services()
   if [ ! -z $service_additional_label ]; then
     fetch_label="${fetch_label}${separator}${service_additional_label}"
   fi
-  kubectl get $service_apigroup $fetch_label -o name;
+  kubectl get $service_apigroup $fetch_label -o name -n $service_namespace;
+fi
 }
 
 ###########################################################
@@ -60,7 +54,7 @@ label_ml_service()
 {
 kubectl label $service backstage-dashboard-name=$service_shortname \
 backstage-dashboard-category=${service_category} \
-backstage-dashboard-type=service --overwrite;
+backstage-dashboard-type=service --overwrite -n $service_namespace;
 }
 
 ###########################################################
@@ -73,11 +67,12 @@ create_ml_clusterinstanceclass()
 {
 if [ -z $service_cluster_instance_class ]
 then
-cat <<EOF | kubectl apply -f -
+cat <<EOF | kubectl apply -n $service_namespace -f -
 apiVersion: services.apps.tanzu.vmware.com/v1alpha1
 kind: ClusterInstanceClass
 metadata:
   name: ${service_category}-${service_shortname}
+  namespace: ${service_namespace}
 spec:
   description:
     short: Cluster Class for ${service_category} ${service_shortname}
@@ -102,27 +97,35 @@ tanzu service class-claim create ${service_category}-${service_shortname} --clas
 # Labeling
 kubectl label classclaim ${service_category}-${service_shortname} backstage-dashboard-name=${service_shortname} \
 backstage-dashboard-category=${service_category} \
-backstage-dashboard-type=binding --overwrite;
+backstage-dashboard-type=binding --overwrite -n $service_namespace;
 }
 
+###########################################################
+# Creates the ConfigMap with supplemental info about the
+# Service
+###########################################################
 create_ml_consolelink_data()
 {
 if [ ! -z ${service_link} ]
 then
-kubectl delete configmap ${service_category}-${service_linkname} || true;
-kubectl create configmap ${service_category}-${service_linkname} --from-literal=link=${service_link};
+kubectl delete configmap ${service_category}-${service_linkname} -n $service_namespace || true;
+kubectl create configmap ${service_category}-${service_linkname} -n $service_namespace \
+--from-literal=link=${service_link} --from-literal=link_description="${service_linkdescription}";
 kubectl label configmap ${service_category}-${service_linkname} backstage-dashboard-name=${service_linkname} \
 backstage-dashboard-category=${service_category} \
-backstage-dashboard-type=console --overwrite;
+backstage-dashboard-type=console --overwrite -n $service_namespace;
 fi
 }
 
-# for ml_namespace in `kubectl get ns`; do
-  fetch_ml_category_properties;
-  echo -e "\nCreating and labeling ConfigMap for ${service_category}-${service_linkname} console link (if it exists)...";
+###########################################################
+# Main Driver
+###########################################################
+parse_yaml_file_to_json | while read -r row ; do
+  initialize_ml_category_properties;
+  echo -e "\n\n\nCreating and labeling ConfigMap for ${service_category}-${service_linkname} console link (if it exists)...";
   create_ml_consolelink_data;
-  for service in `fetch_ml_services`; do
-    echo -e "\n\n\n"$service".....................................";
+  for service in `fetch_ml_services || []`; do
+    echo -e "\n"$service".....................................";
     export service_shortname=$(echo $service | cut -d'/' -f2);
 
     echo -e "\nLabeling service $service_shortname...";
@@ -134,4 +137,4 @@ fi
     echo -e "\nCreating and labeling ${service_category}-${service_shortname} ClassClaim...";
     create_ml_classclaim;
   done;
-# done;
+done;

@@ -9,13 +9,22 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: tap-gui
           containers:
             - name: load-params
-              image: golang
+              image: $(image_repo)
+              env:
+                - name: ML_BACKSTAGE_TARGET_NAMESPACE
+                  value: default
               volumeMounts:
                 - name: ml-backstage-configmap-volume
-                  mountPath: /tmp
-              command: [ "sh", "-c", "/tmp/task.sh;" ]
+                  mountPath: /usr/src/app
+              command:
+                - sh
+                - "-c"
+                - |
+                  export ML_PROPERTIES_FILE=/usr/src/app/automation-fields.yaml
+                  /usr/src/app/task.sh
           restartPolicy: Never
           volumes:
             - name: ml-backstage-configmap-volume
