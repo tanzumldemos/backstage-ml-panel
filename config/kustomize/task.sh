@@ -40,14 +40,14 @@ export service_obj_name=${service_obj_prefix}-${service_category}-${service_shor
 ###########################################################
 fetch_ml_services()
 {
-fetch_labels="";
+fetch_label="";
 separator="";
 if [ ! -z $service_apigroup ]; then
   if [ $service_apigroup == "secret" ] || [ ! -z $service_additional_label ]; then
     fetch_label="-l "
   fi
   if [ $service_apigroup == "secret" ]; then
-    fetch_label="${fetch_label}backstage-dashboard-name=$service_linkname";
+    fetch_label="${fetch_label}backstage-dashboard-name=$service_shortname";
     separator=",";
   fi
   if [ ! -z $service_additional_label ]; then
@@ -119,9 +119,8 @@ create_ml_consolelink_data()
 {
 if [ ! -z ${service_link} ]
 then
-kubectl delete configmap ${service_obj_prefix}-${service_category}-${service_linkname} -n $service_namespace || true;
 kubectl create configmap ${service_obj_prefix}-${service_category}-${service_linkname} -n $service_namespace \
---from-literal=link=${service_link} --from-literal=link_description="${service_linkdescription}";
+--from-literal=link=${service_link} --from-literal=link_description="${service_linkdescription}" -oyaml --dry-run=client | kubectl apply -f -;
 kubectl label configmap ${service_obj_prefix}-${service_category}-${service_linkname} backstage-dashboard-name=${service_linkname} \
 backstage-dashboard-category=${service_category} \
 backstage-dashboard-type=console --overwrite -n $service_namespace;
