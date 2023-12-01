@@ -3,23 +3,23 @@
 ![](mlbackstage-automation.jpg?raw=true)
 ## Store metadata dependencies in GitHub
 
-1. Update **yaml/static/tools.yaml** as appropriate. 
-This will be the source metadata file used to render the **static** portion of the plugin's GUI 
-(i.e. **generic** tool information - tool category, description, image, etc).
+1. Update **yaml/static/tools.yaml** as appropriate.
+   This will be the source metadata file used to render the **static** portion of the plugin's GUI
+   (i.e. **generic** tool information - tool category, description, image, etc).
 
 2. Update **yaml/automation/data.yaml** as appropriate.
-This will be the source metadata file used to render the **dynamic** portion of the plugin's GUI which will come from the environment 
-(i.e. **instances** of the tools - helm instances, Kubernetes deployments, etc).
+   This will be the source metadata file used to render the **dynamic** portion of the plugin's GUI which will come from the environment
+   (i.e. **instances** of the tools - helm instances, Kubernetes deployments, etc).
 
-3. Add the images referenced by **yaml/static/tools.yaml** to the **images** folder.
+3. Add the images referenced by **yaml/static/tools.yaml** to the **images/public** folder.
 
 ## Deploy Service Binding Automation
 
-1. Replace YOUR_IMAGE_REPO in the file <root of directory>/image_repo 
-with the name of your **target image repo** for the automation job (example: myregistry/automationimg).
+1. Replace YOUR_IMAGE_REPO in the file <root of directory>/image_repo
+   with the name of your **target image repo** for the automation job (example: myregistry/automationimg).
 
 2. Replace YOUR_BACKSTAGE_NAMESPACE in the file <root of directory>/backstage_namespace
-with the **target Kubernetes namespace** for the automation job.
+   with the **target Kubernetes namespace** for the automation job.
 
 3. Copy the automation job's image to your local image registry:
 ```
@@ -38,9 +38,9 @@ kubectl label deployment YOUR_JUPYTER_DEPLOYMENT backstage-dashboard-category=se
 ```
 
 4. Set up **Direct Secrets** for **non-Service Binding compatible** service instances (external services, non-database deployments, etc)
-that you want to set up for connectivity via Service Bindings - use **automation/other/directsecret.yaml** as a template.
+   that you want to set up for connectivity via Service Bindings - use **automation/other/directsecret.yaml** as a template.
 
-**NOTE**: You must set up a Kubernetes secret for the service instance as a pre-requisite. 
+**NOTE**: You must set up a Kubernetes secret for the service instance as a pre-requisite.
 Currently, the secret must live in YOUR_BACKSTAGE_NAMESPACE.
 
 5. Set up the automation job:
