@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 ###########################################################
 # Generates JSON output from YAML file
 ###########################################################
@@ -12,14 +12,14 @@ yq -p yaml -o json "${ML_PROPERTIES_FILE}" | jq -c '.properties | .[]'
 ###########################################################
 initialize_ml_category_properties()
 {
-export service_group=$(echo $row | jq -r '.service_group');
-export service_apigroup=$(echo $row | jq -r '.service_apigroup');
-export service_kind=$(echo $row | jq -r '.service_kind');
+export service_cluster_instance_group=$(echo $row | jq -r '.service_cluster_instance_group');
+export service_query_group=$(echo $row | jq -r '.service_query_group');
+export service_cluster_instance_kind=$(echo $row | jq -r '.service_cluster_instance_kind');
 export service_category=$(echo $row | jq -r '.service_category');
 export service_link=$(echo $row | jq -r '.service_link');
 export service_linkname=$(echo $row | jq -r '.service_linkname');
 export service_linkdescription=$(echo $row | jq -r '.service_linkdescription');
-export service_additional_label=$(echo $row | jq -r '.service_additional_label');
+export service_query_additional_label=$(echo $row | jq -r '.service_query_additional_label');
 export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_instance_class');
 export service_namespace=$(echo $ML_BACKSTAGE_TARGET_NAMESPACE || 'default');
 }
@@ -42,18 +42,20 @@ fetch_ml_services()
 {
 fetch_label="";
 separator="";
-if [ ! -z $service_apigroup ]; then
-  if [ $service_apigroup == "secret" ] || [ ! -z $service_additional_label ]; then
-    fetch_label="-l "
+if [ ! -z $service_query_group ]; then
+  if [ "$service_query_group" = "secret" ] || [ ! -z $service_query_additional_label ]; then
+    fetch_label="-l ";
   fi
-  if [ $service_apigroup == "secret" ]; then
-    fetch_label="${fetch_label}backstage-dashboard-name=$service_shortname";
+  if [ "$service_query_group" = "secret" ] && [ ! -z $service_query_additional_label ]; then
     separator=",";
   fi
-  if [ ! -z $service_additional_label ]; then
-    fetch_label="${fetch_label}${separator}${service_additional_label}"
+  if [ "$service_query_group" = "secret" ]; then
+    fetch_label="${fetch_label}backstage-dashboard-name=${service_shortname}";
   fi
-  kubectl get $service_apigroup $fetch_label -o name -n $service_namespace;
+  if [ ! -z $service_query_additional_label ]; then
+    fetch_label="${fetch_label}${separator}${service_query_additional_label}";
+  fi
+  kubectl get $service_query_group $fetch_label -o name -n $service_namespace;
 fi
 }
 
@@ -87,8 +89,8 @@ spec:
   description:
     short: Cluster Class for ${service_category} ${service_shortname}
   pool:
-    group: ${service_group}
-    kind: ${service_kind}
+    group: ${service_cluster_instance_group}
+    kind: ${service_cluster_instance_kind}
     labelSelector:
       matchLabels:
         backstage-dashboard-name: $service_shortname

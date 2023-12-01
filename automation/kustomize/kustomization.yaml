@@ -1,14 +1,14 @@
 configMapGenerator:
   - name: ml-backstage-configmap
     files:
-      - automation-fields.yaml
+      - data.yaml
       - task.sh
   - name: env-configmap
     files:
       - image_repo
       - backstage_namespace
 resources:
-  - automation-job.yaml
+  - job.yaml
 replacements:
   - source:
       kind: ConfigMap

@@ -23,7 +23,7 @@ spec:
                 - sh
                 - "-c"
                 - |
-                  export ML_PROPERTIES_FILE=/usr/src/app/automation-fields.yaml
+                  export ML_PROPERTIES_FILE=/usr/src/app/data.yaml
                   /usr/src/app/task.sh
           restartPolicy: Never
           volumes:
