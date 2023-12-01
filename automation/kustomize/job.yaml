@@ -9,7 +9,7 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: tap-gui
+          serviceAccountName: default
           containers:
             - name: load-params
               image: $(image_repo)
