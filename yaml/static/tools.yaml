@@ -6,8 +6,7 @@ metadata:
 spec:
   type: metadata
   lifecycle: production
-  owner: tanzu
-  system: tanzu
+  owner: guests
   tools:
     - name: "greenplum"
       title: "Database Storage"
