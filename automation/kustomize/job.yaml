@@ -9,7 +9,7 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: default
+          serviceAccountName: bkstg-automation
           containers:
             - name: load-params
               image: $(image_repo)
