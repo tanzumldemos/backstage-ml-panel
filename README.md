@@ -29,12 +29,12 @@ docker build -t YOUR_IMAGE_REPO automation/other
 docker push YOUR_IMAGE_REPO
 ```
 
-3. Label the IDE tools that will be used as the central point for service bindings - JupyterHub deployments, database IDEs (ex. pgadmin), etc:
+3. Set up the **ServiceAccount** that will be used for the automation:
 ```
-kubectl label deployment YOUR_JUPYTER_DEPLOYMENT backstage-dashboard-category=servicebinding
+automation/other/serviceaccount.yaml
 ```
 
-4. Set up **Direct Secrets** for **non-Service Binding compatible** service instances (external services, non-database deployments, etc)
+4. Set up **Direct Secrets** for any **non-Service Binding compatible** service instances (external services, non-database deployments, etc)
    that you want to set up for connectivity via Service Bindings - use **automation/other/directsecret.yaml** as a template.
 
 **NOTE**: You must set up a Kubernetes secret for the service instance as a pre-requisite.

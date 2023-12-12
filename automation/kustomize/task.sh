@@ -141,9 +141,9 @@ fi
 
 add_servicebinding_to_jupyterhub()
 {
-for jupyter in `kubectl get deployment -l backstage-dashboard-category=servicebinding -o name -n $service_namespace`; do
+for jupyter in `kubectl get deploy -l backstage-dashboard-category=servicebinding -o name -n $service_namespace`; do
 export jupyter_shortname=$(echo $jupyter | cut -d'/' -f2);
-cat <<EOF | kubectl apply -n $service_namespace -f -
+cat <<EOF | kubectl create -n $service_namespace -f -
 apiVersion: servicebinding.io/v1beta1
 kind: ServiceBinding
 metadata:
