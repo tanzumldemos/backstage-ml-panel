@@ -51,7 +51,6 @@ fetch_ml_services()
 {
 fetch_label="";
 separator="";
-export service_shortname=$(echo $service | cut -d'/' -f2);
 if [ ! -z $service_query_group ]; then
   if [ "$service_query_group" = "secret" ] || [ ! -z $service_query_additional_label ]; then
     fetch_label="-l ";
@@ -60,7 +59,7 @@ if [ ! -z $service_query_group ]; then
     separator=",";
   fi
   if [ "$service_query_group" = "secret" ]; then
-    fetch_label="${fetch_label}backstage-dashboard-name=${service_shortname}";
+    fetch_label="${fetch_label}backstage-dashboard-name=${service_linkname}";
   fi
   if [ ! -z $service_query_additional_label ]; then
     fetch_label="${fetch_label}${separator}${service_query_additional_label}";
