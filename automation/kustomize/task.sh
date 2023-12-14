@@ -147,7 +147,7 @@ cat <<EOF | kubectl create -n $service_namespace -f -
 apiVersion: servicebinding.io/v1beta1
 kind: ServiceBinding
 metadata:
-  name: ${service_obj_name}-jupyter-binding
+  name: ${service_obj_name}
 spec:
   service:
     apiVersion: services.apps.tanzu.vmware.com/v1alpha1
