@@ -49,7 +49,8 @@ if [ ! -z $service_query_group ]; then
     separator=",";
   fi
   if [ "$service_query_group" = "secret" ]; then
-    fetch_label="${fetch_label}backstage-dashboard-name=${service_linkname}";
+    export service_shortname=service_linkname;
+    fetch_label="${fetch_label}backstage-dashboard-name=${service_shortname}";
   fi
   if [ ! -z $service_query_additional_label ]; then
     fetch_label="${fetch_label}${separator}${service_query_additional_label}";
