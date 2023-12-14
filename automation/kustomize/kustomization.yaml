@@ -3,6 +3,7 @@ configMapGenerator:
     files:
       - data.yaml
       - task.sh
+      - task-debug.sh
   - name: env-configmap
     files:
       - image_repo
