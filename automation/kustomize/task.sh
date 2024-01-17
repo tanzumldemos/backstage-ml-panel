@@ -30,6 +30,7 @@ export service_link=$(echo $row | jq -r '.service_link');
 export service_linkname=$(echo $row | jq -r '.service_linkname');
 export service_linkdescription=$(echo $row | jq -r '.service_linkdescription');
 export service_query_additional_label=$(echo $row | jq -r '.service_query_additional_label');
+export service_query_additional_field_selector=$(echo $row | jq -r '.service_query_additional_field_selector');
 export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_instance_class');
 export service_obj_prefix='bkstg';
 }
@@ -51,20 +52,24 @@ fetch_ml_services()
 {
 fetch_label="";
 separator="";
+field_selector="";
 if [ ! -z $service_query_group ]; then
-  if [ "$service_query_group" = "secret" ] || [ ! -z $service_query_additional_label ]; then
+  if [  ! -z $service_linkname ] || [ ! -z $service_query_additional_label ]; then
     fetch_label="-l ";
   fi
-  if [ "$service_query_group" = "secret" ] && [ ! -z $service_query_additional_label ]; then
+  if [  ! -z $service_linkname ] && [ ! -z $service_query_additional_label ]; then
     separator=",";
   fi
-  if [ "$service_query_group" = "secret" ]; then
+  if [ ! -z $service_linkname ]; then
     fetch_label="${fetch_label}backstage-dashboard-name=${service_linkname}";
   fi
   if [ ! -z $service_query_additional_label ]; then
     fetch_label="${fetch_label}${separator}${service_query_additional_label}";
   fi
-  kubectl get $service_query_group $fetch_label -o name -n $service_namespace;
+  if [ ! -z $service_query_additional_field_selector ]; then
+    field_selector="--field-selector ${service_query_additional_field_selector}";
+  fi
+  kubectl get $service_query_group $fetch_label $field_selector -o name -n $service_namespace;
 fi
 }
 

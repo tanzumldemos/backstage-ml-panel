@@ -20,7 +20,9 @@ export service_link=$(echo $row | jq -r '.service_link');
 export service_linkname=$(echo $row | jq -r '.service_linkname');
 export service_linkdescription=$(echo $row | jq -r '.service_linkdescription');
 export service_query_additional_label=$(echo $row | jq -r '.service_query_additional_label');
+export service_query_additional_field_selector=$(echo $row | jq -r '.service_query_additional_field_selector');
 export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_instance_class');
+export service_obj_prefix='bkstg';
 }
 
 ###########################################################
@@ -29,8 +31,7 @@ export service_cluster_instance_class=$(echo $row | jq -r '.service_cluster_inst
 generate_ml_object_names()
 {
 export service_shortname=$(echo $service | cut -d'/' -f2);
-export service_obj_prefix='bkstg';
-export service_obj_name=${service_obj_prefix}-${service_category}-${service_shortname};
+export service_obj_name=${service_obj_prefix}-${service_namespace}-${service_shortname};
 }
 
 ###########################################################
@@ -41,6 +42,7 @@ fetch_ml_services()
 {
 fetch_label="";
 separator="";
+field_selector=""
 if [ ! -z $service_query_group ]; then
   if [ "$service_query_group" = "secret" ] || [ ! -z $service_query_additional_label ]; then
     fetch_label="-l ";
@@ -54,7 +56,10 @@ if [ ! -z $service_query_group ]; then
   if [ ! -z $service_query_additional_label ]; then
     fetch_label="${fetch_label}${separator}${service_query_additional_label}";
   fi
-  echo "kubectl get $service_query_group $fetch_label -o name;"
+  if [ ! z $service_query_additional_field_selector ]; then
+    field_selector="--field-selector=${service_query_additional_field_selector}"
+  fi
+  kubectl get $service_query_group $fetch_label $field_selector -o name -n $service_namespace;
 fi
 }
 
@@ -65,7 +70,8 @@ label_ml_service()
 {
 echo "kubectl label $service backstage-dashboard-name=$service_shortname \
 backstage-dashboard-category=${service_category} \
-backstage-dashboard-type=service --overwrite;"
+backstage-dashboard-type=service --overwrite \
+-n $service_namespace;"
 }
 
 ###########################################################
