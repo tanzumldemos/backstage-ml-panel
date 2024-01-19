@@ -117,7 +117,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://a128636e92ac54b4cbf625c3f2744de8-1964586487.us-east-1.elb.amazonaws.com"
+        service_link: "http://ab8bcf43ab02e4d0c91487e46d02cb44-179326189.us-east-1.elb.amazonaws.com"
         service_linkname: "jupyter-main"
         service_linkdescription: "Main Hub"
     argo:
