@@ -150,7 +150,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "https://evidently-ui.default.tanzumlai.com/"
+        service_link: "http://evidently-dashboard.tanzudatatap.com"
         service_linkname: "evidently-main"
         service_linkdescription: "Dev Monitoring Instance"
     ray:
