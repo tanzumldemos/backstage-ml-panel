@@ -87,6 +87,17 @@ properties:
         service_link: "http://scdf.tanzudatatap.com/dashboard"
         service_linkname: "scdf-main"
         service_linkdescription: "Pre-prod instance"
+    databricks:
+        service_category: "databricks"
+        service_cluster_instance_group: ""
+        service_cluster_instance_kind: ""
+        service_cluster_instance_class: ""
+        service_query_group: ""
+        service_query_additional_label: ""
+        service_query_additional_field_selector: ""
+        service_link: "https://community.cloud.databricks.com"
+        service_linkname: "databricks-main"
+        service_linkdescription: "Main Databricks instance"
     gemfire:
         service_category: "gemfire"
         service_cluster_instance_group: ""
