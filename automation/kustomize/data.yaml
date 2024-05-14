@@ -21,6 +21,17 @@ properties:
         service_link: ""
         service_linkname: ""
         service_linkdescription: ""
+    vmware-postgres-on-vms:
+        service_category: "postgres"
+        service_cluster_instance_group: ""
+        service_cluster_instance_kind: "Secret"
+        service_cluster_instance_class: ""
+        service_query_group: "secret"
+        service_query_additional_label: "instance_type=tanzu_vm"
+        service_query_additional_field_selector: ""
+        service_link: ""
+        service_linkname: ""
+        service_linkdescription: ""
     bitnami-mongodb:
         service_category: "mongodb"
         service_cluster_instance_group: ""
@@ -62,7 +73,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://mlflow.tanzudatatap.com"
+        service_link: "http://mlflow.tanzumlai.com"
         service_linkname: "mlflow-main"
         service_linkdescription: "Dev Instance"
     datahub:
@@ -73,7 +84,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://datahub-datahub.tanzudatatap.com"
+        service_link: "http://datahub-datahub.tanzumlai.com"
         service_linkname: "datahub-main"
         service_linkdescription: "Main Data Catalog"
     scdf:
@@ -117,7 +128,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://kubeflow-pipelines.tanzudatatap.com/#/pipelines"
+        service_link: "http://kubeflow-pipelines.tanzumlai.com/#/pipelines"
         service_linkname: "kubeflow-pipelines-main"
         service_linkdescription: "Dev Training Environment"
     jupyter:
@@ -139,7 +150,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "https://argo-workflows.tanzudatatap.com/"
+        service_link: "https://argo-workflows.tanzumlai.com/"
         service_linkname: "argoworkflows-main"
         service_linkdescription: "Dev Pipelines"
     huggingface:
@@ -161,7 +172,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://evidently-dashboard.tanzudatatap.com"
+        service_link: "http://evidently-dashboard.tanzumlai.com"
         service_linkname: "evidently-main"
         service_linkdescription: "Dev Monitoring Instance"
     ray:

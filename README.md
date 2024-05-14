@@ -31,7 +31,7 @@ docker push YOUR_IMAGE_REPO
 
 3. Set up the **ServiceAccount** that will be used for the automation:
 ```
-automation/other/serviceaccount.yaml
+kubectl apply -f automation/other/serviceaccount.yaml
 ```
 
 4. Set up **Direct Secrets** for any **non-Service Binding compatible** service instances (external services, non-database deployments, etc)
