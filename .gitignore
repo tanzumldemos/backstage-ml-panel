@@ -1,3 +1,4 @@
 ml-backstage-externalservice.yaml
 tmp*.yaml
 directsecret-greenplum.yaml
+directsecret-greenplum-2.yaml
