@@ -62,7 +62,7 @@ properties:
         service_query_group: "secret"
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://ec2-44-201-91-88.compute-1.amazonaws.com:28080"
+        service_link: "http://35.185.25.89"
         service_linkname: "greenplum-training"
         service_linkdescription: "AWS Marketplace Training Instance"
     mlflow:
