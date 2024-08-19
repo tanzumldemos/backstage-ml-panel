@@ -139,7 +139,7 @@ properties:
         service_query_group: ""
         service_query_additional_label: ""
         service_query_additional_field_selector: ""
-        service_link: "http://35.185.25.89"
+        service_link: "http://34.74.41.177"
         service_linkname: "jupyter-main"
         service_linkdescription: "Main Hub"
     argo:

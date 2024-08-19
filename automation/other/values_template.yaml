@@ -1,0 +1,17 @@
+#@data/values
+---
+secret_name: YOUR_SECRET_NAME
+secret_source_namespace: YOUR_SECRET_SOURCE_NAMESPACE
+secret_target_namespace: YOUR_SECRET_TARGET_NAMESPACE
+tool_category: YOUR_TOOL_CATEGORY
+service_name: YOUR_SERVICE_NAME
+cluster_class_description: YOUR_CLUSTER_CLASS_DESCRIPTION
+binding_database: YOUR_SECRET_DATABASE_VALUE
+binding_username: YOUR_SECRET_USERNAME_VALUE
+binding_password: YOUR_SECRET_PASSWORD_VALUE
+binding_host: YOUR_SECRET_HOST_VALUE
+binding_port: YOUR_SECRET_PORT_VALUE
+binding_type: YOUR_SECRET_TYPE_VALUE
+binding_provider: vmware
+binding_schema: YOUR_SECRET_SCHEMA_VALUE
+binding_url: YOUR_SECRET_URL_VALUE

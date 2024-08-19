@@ -1,0 +1,26 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClusterInstanceClass
+metadata:
+  name: #@ "bkstg-" + data.values.secret_target_namespace + "-" + data.values.service_name
+spec:
+  description:
+    short: #@ data.values.cluster_class_description
+  pool:
+    kind: secret
+    labelSelector:
+      matchLabels:
+        backstage-dashboard-name: #@ data.values.service_name
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClassClaim
+metadata:
+  labels:
+    backstage-dashboard-category: #@ data.values.tool_category
+    backstage-dashboard-name: #@ data.values.service_name
+    backstage-dashboard-type: binding
+  name: #@ "bkstg-" + data.values.secret_target_namespace + "-" + data.values.service_name
+spec:
+  classRef:
+    name: #@ "bkstg-" + data.values.secret_target_namespace + "-" + data.values.service_name
